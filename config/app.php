@@ -194,6 +194,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\GoogleServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
     ],
 

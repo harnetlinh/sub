@@ -189,15 +189,15 @@
       <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'></script>
 
       <script>
-          $(document).ready(function() {
-              $('#loginModal').modal('show');
-              $('#close-popup, .modal-backdrop').click(function() {
-                  $('#loginModal').modal('hide');
-              });
-
-              // Mở modal khi bạn muốn
-              $('#open-popup-button').click(function() {
-                  $('#loginModal').modal('show');
-              });
+        $(document).ready(function() {
+          $('#close-popup, .modal-backdrop').click(function() {
+            $('#loginModal').modal('hide');
           });
+
+          // Mở modal khi bạn muốn
+          $('#open-popup-button').click(function() {
+            $('#loginModal').modal('show');
+          });
+        });
       </script>
+

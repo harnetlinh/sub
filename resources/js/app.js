@@ -28,19 +28,17 @@
 
 import { createApp } from 'vue';
 import App from './components/customers/App.vue';
-import Test from './components/customers/Test.vue';
+import Home from './components/customers/Home.vue';
 
 // const app = createApp(App);
 const app = createApp({})
 
 // Đăng ký các component bằng .component
 app.component('app', App);
-app.component('test', Test);
+app.component('home', Home);
 
 
 
 
 app.mount('#app');
 
-
-// app.mount("#app");
