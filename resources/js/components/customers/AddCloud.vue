@@ -119,7 +119,7 @@ export default {
         };
     },
     mounted() {
-        
+
     },
     methods: {
         loginWithGg() {

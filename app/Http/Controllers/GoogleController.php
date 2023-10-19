@@ -55,29 +55,26 @@ class GoogleController extends Controller
 
     {
         try {
-                $user = Socialite::driver('google')->user();
-
-                $finduser = User::where('google_id', $user->id)->first();
-
-                if($finduser){
-
-                    Auth::login($finduser);
-
-                    return redirect()->route('home');
-
-                }else{
-                    $newUser = User::updateOrCreate(['email' => $user->email],[
-                            'name' => $user->name,
-                            'google_id'=> $user->id,
-                            'password' => encrypt('namnt123')
-                        ]);
-
-                    Auth::login($newUser);
-
-                    return redirect()->route('home');
-                }
-        } catch (Exception $e) {
-            dd($e->getMessage());
+            $user = Socialite::driver('google')->user();
+            $is_user = User::where('email', $user->getEmail())->first();
+            if(!$is_user){
+                $saveUser = User::updateOrCreate([
+                    'google_id' => $user->getId(),
+                ],[
+                    'name' => $user->getName(),
+                    'email' => $user->getEmail(),
+                    'password' => Hash::make($user->getName().'@'.$user->getId()),
+                ]);
+                return redirect()->route('home');
+            }else{
+                $saveUser = User::where('email',  $user->getEmail())->update([
+                    'google_id' => $user->getId(),
+                ]);
+                $saveUser = User::where('email', $user->getEmail())->first();
+                return redirect()->route('home');
+            }
+        } catch (\Throwable $e) {
+            dd($e);
         }
     }
 }

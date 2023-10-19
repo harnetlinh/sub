@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+
 use App\Models\FileUploads;
 use Laravel\Socialite\Facades\Socialite;
-use App\Models\User;
+
 use App\Models\DriveService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\App;
@@ -16,6 +16,7 @@ class GoogleDriveController extends Controller
 {
     public function loginWithGoogle()
     {
+
         return Socialite::driver('google')->scopes([
             'https://www.googleapis.com/auth/drive.readonly',
             'https://www.googleapis.com/auth/drive.metadata',
@@ -31,6 +32,7 @@ class GoogleDriveController extends Controller
     public function callbackFromGoogle()
     {
         try {
+
             $user = Socialite::driver('google')->user();
             $is_user = DriveService::where('email', $user->getEmail())->first();
             if (!$is_user) {
@@ -52,7 +54,8 @@ class GoogleDriveController extends Controller
                 return redirect()->route('home');
             }
         } catch (\Throwable $e) {
-            return redirect()->route('index')->with(['error' => $e]);
+            // return redirect()->route('index')->with(['error' => $e]);
+            return response(['error' => $e->getMessage()], 500);
         }
     }
 
@@ -106,27 +109,27 @@ class GoogleDriveController extends Controller
         return [
             "status" => 200,
             "data" => 'Success'
-        ]; 
+        ];
     }
 
     public function upLoadDrive($request)
     {
         if ($request->hasFile('file')) {
             $filenamewithextension = $request->file('file')->getClientOriginalName();
-            
+
             //get filename without extension
             $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
-            
+
             //get file extension
             $extension = $request->file('file')->getClientOriginalExtension();
-            
+
             //filename to store
             $filenametostore = $filename . '_' . time() . '.' . $extension;
 
             $file = $request->file('file');
 
             $size = $file->getSize();
-            
+
             $type = $file->extension();
 
             $path = '/' . $filenametostore;
@@ -155,7 +158,7 @@ class GoogleDriveController extends Controller
     public function getfileUpLoadCloud($key){
         $file = FileUploads::where('key', $key)->first();
         $urlFile = Storage::disk('google')->url($key);
-        
+
         return [
             "status" => 200,
             "url" => $urlFile,

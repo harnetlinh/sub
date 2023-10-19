@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Storage;
+use Google_Client;
 
 class GoogleServiceProvider extends ServiceProvider
 {
@@ -26,34 +27,42 @@ class GoogleServiceProvider extends ServiceProvider
     {
         try {
             Storage::extend('google', function($app, $config) {
+                // $accessToken = 'ya29.a0AbVbY6MPgkKR6HqHl-DpnRN_mzRyfEws3ugijPWkaJntyAQFEf1HTJ4GkWGDlsweCaIJVnLG2uev7V0CLs-XrnuZKAMizsNBJr3lCI8gvVeprlre_YwdaDkSYXd8C87IxVH9oGUknVxhmWIuFFtHFT_lRkIvaCgYKAdoSARISFQFWKvPlGN1ajhLhdpxcwK0bfBbaGQ0163';
+                // $refreshToken = '1//0e8IElAEGHy5XCgYIARAAGA4SNwF-L9Irw_YanODLhugJigi1jWTmMEbRAsNu78bnkfjhqIWQdHdaZYd4Z6HGL0uBvzrA4likL88';
+
+                $accessToken = session()->get('accessToken');
+                $refreshToken = session()->get('refreshToken');
+
+                $client = new Google_Client();
+                $client->setClientId($config['clientId']);
+                $client->setClientSecret($config['clientSecret']);
+                $client->setAccessToken($accessToken);
+                $client->refreshToken($refreshToken);
+
+                $client->addScope(array(
+                    'https://www.googleapis.com/auth/drive.file',
+        //            'https://www.googleapis.com/auth/plus.login',
+                    'https://www.googleapis.com/auth/userinfo.email',
+                    'https://www.googleapis.com/auth/drive.metadata',
+                    'https://www.googleapis.com/auth/drive',
+                    'https://www.googleapis.com/drive/v3/files/fileId'
+                ));
+
+                $client->addScope('email');
+
+                $client->setAccessType("offline");
+
+                $client->setApprovalPrompt("force");
+
                 $options = [];
+
                 if (!empty($config['teamDriveId'] ?? null)) {
                     $options['teamDriveId'] = $config['teamDriveId'];
                 }
-                $client = new \Google\Client();
-
-                $client->setClientId($_ENV['GOOGLE_CLIENT_ID']);
-                $client->setClientSecret($_ENV['GOOGLE_CLIENT_SECRET']);
-
-                // Set the actual access token and refresh token here
-                $accessToken = 'ya29.a0AfB_byC5g7QJtitxkQR7Eb9P8aXBX6v5P0C4uyQVjDgoqtpcCqYPx7eY2fwT126EcFbk0csZiz09d8jFe9aspLYqTxf4Lpqn1LPd8Rjrp1ueMFL6AVavttfqKd82wP5pgQAsMCzuO3AxZd_LUfqRpLTakl-KrSrMfTf4aCgYKAcoSARISFQGOcNnC1vwumy0IetnFsI4eAjFoCQ0171';
-                $refreshToken = '1//043dAmC9IHuskCgYIARAAGAQSNwF-L9IrdPg8Ywo8b2oyU2GiwI4ulDK3hK3A_rSCTEcpEDjtYkN9u9GJieUaXq1b5gvg-rTEibs';
-
-                $client->setAccessToken([
-                    'access_token' => $accessToken,
-                    'refresh_token' => $refreshToken,
-                ]);
-
-                if ($client->isAccessTokenExpired()) {
-                    // You may need to handle token refresh here
-                    $client->fetchAccessTokenWithRefreshToken();
-                    // Make sure to update the access token in your configuration
-                    $accessToken = $client->getAccessToken();
-                }
 
                 $service = new \Google\Service\Drive($client);
-                $adapter = new \Masbug\Flysystem\GoogleDriveAdapter($service, $config['folder'] ?? '/', $options);
-                $driver  = new \League\Flysystem\Filesystem($adapter);
+                $adapter = new \Masbug\Flysystem\GoogleDriveAdapter($service, $config['folderId'] ?? '/', $options);
+                $driver = new \League\Flysystem\Filesystem($adapter);
 
                 return new \Illuminate\Filesystem\FilesystemAdapter($driver, $adapter);
             });
