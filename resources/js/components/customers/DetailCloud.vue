@@ -20,20 +20,14 @@
             <br />
             <div class="relative flex  flex-col rounded-xl bg-white bg-clip-border  shadow-md">
                 <div class="p-6">
-                    <div v-show="type == 'jpg'">
-                        <img :src="file" alt=""/>
+                    <div v-if="type && type.startsWith('image/')">
+                        <img :src="file" alt="Image" />
                     </div>
-                    <div v-show="type == 'png'">
-                        <img :src="file" alt=""/>
-                    </div>
-                    <div v-show="type == 'pdf'">
+                    <div v-else-if="type === 'application/pdf'">
                         <iframe :src="file" frameborder="0" width="100%" height="600"></iframe>
                     </div>
-                    <div v-show="type == 'docx'">
-                        <iframe :src="file" frameborder="0" width="100%" height="600"></iframe>
-                    </div>
-                    <div v-show="type == null">
-                        <img src="https://i.pinimg.com/originals/49/d3/90/49d390ed4b730c2a927c82c62baa0e43.gif" alt=""/>
+                    <div v-else>
+                        <p>Preview is not available for this file type.</p>
                     </div>
                 </div>
             </div>
@@ -46,9 +40,9 @@ import axios from "axios";
 
 export default {
     name: 'detailDrive',
+    path: '/detail/:cloud/:id',
     data() {
         return {
-            image: null,
             type: null,
             file: null,
             id: null,
@@ -56,33 +50,45 @@ export default {
         }
     },
     created() {
+        this.cloud = this.$route.params.cloud;
         this.id = this.$route.params.id;
-        this.disPlayDrive();
+        this.showFileDetails();
     },
-    // mounted() {
-    //     console.log(this.type);
-    // },
     methods: {
-        async disPlayDrive() {
-            const result = await axios.get(`http://127.0.0.1:8000/get-file-upLoad-cloud/${this.id}`);
-            this.file = result.data.url;
-            this.type = result.data.type;
+        async showFileDetails() {
+            try {
+                const response = await axios.get(`http://127.0.0.1:8000/get-file-details/${this.cloud}/${this.id}`);
+                const { type, file } = response.data;
+                this.type = type;
+                this.file = file;
+            } catch (error) {
+                console.error("Error fetching file details: " + error);
+            }
         },
+
         async downLoadFile() {
-            const response = await axios.get(`http://127.0.0.1:8000/file-down-load-cloud/${this.id}`, {
-                responseType: 'blob',
-            });
-            const url = URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', this.id);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            try {
+                const response = await axios.get(`http://127.0.0.1:8000/file-down-load-cloud/${this.cloud}/${this.id}`, {
+                    responseType: 'blob',
+                });
+                const url = URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', this.id);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                console.error("Error downloading file: " + error);
+            }
         },
         async deleteFileCloud() {
-            await axios.delete(`http://127.0.0.1:8000/file-delete-cloud/${this.selectedItems}`);
-            location.reload();
+            try {
+                await axios.delete(`http://127.0.0.1:8000/file-delete-cloud/${this.selectedItems}`);
+                location.reload();
+            } catch (error) {
+                console.error("Error deleting file: " + error);
+            }
         }
     }
 }

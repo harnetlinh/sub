@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FileUploads;
 use Laravel\Socialite\Facades\Socialite;
-
+use Illuminate\Http\Request;
 use App\Models\DriveService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\App;
@@ -88,17 +88,30 @@ class GoogleDriveController extends Controller
             "data" => $result,
         ];
     }
-
     public function getAllDrive()
     {
-        $dir = '/';
+        $currentFolderPath = request('folder', '/');
+        $dir = $currentFolderPath;
         $recursive = false;
         $contents = collect(Storage::disk('google')->listContents($dir, $recursive));
-        // $contents = Storage::disk('google')->listFiles(['pageSize' => 100, ]);
 
         return [
             "status" => 200,
-            "data" => $contents
+            "data" => $contents,
+            "current_folder" => $currentFolderPath,
+        ];
+    }
+
+    public function getFolderContents($folderPath)
+    {
+        $dir = $folderPath;
+        $recursive = false;
+        $contents = collect(Storage::disk('google')->listContents($dir, $recursive));
+
+        return [
+            "status" => 200,
+            "data" => $contents,
+            "current_folder" => $folderPath,
         ];
     }
 
@@ -155,34 +168,29 @@ class GoogleDriveController extends Controller
         return response()->json('No file selected');
     }
 
-    public function getfileUpLoadCloud($key){
-        $file = FileUploads::where('key', $key)->first();
-        $urlFile = Storage::disk('google')->url($key);
 
-        return [
-            "status" => 200,
-            "url" => $urlFile,
-            "type" => $file->type
-        ];
+    public function fileDownLoadCloud($key)
+    {
+        try {
+            $currentFolderPath = request('folder', '/');
+            $dir = $currentFolderPath;
+            $recursive = false;
+            $contents = collect(Storage::disk('google')->listContents($dir, $recursive));
+            // Lấy tệp từ Google Drive bằng key (hoặc ID)
+            $file = Storage::disk('google')->get($key);
+
+            // Lấy thông tin về tệp từ cơ sở dữ liệu (nếu bạn lưu trữ kiểu MIME)
+            $fileInfo = FileUploads::where('key', $key)->first();
+            $mimeType = $fileInfo ? $fileInfo->type : 'application/octet-stream';
+
+            return response($file)
+                ->header('Content-Type', $mimeType)
+                ->header('Content-Disposition', 'attachment; filename="' . $key . '"');
+        } catch (\Throwable $e) {
+            return response(['error' => $e->getMessage()], 500);
+        }
     }
 
-    public function fileDownLoadCloud($key){
-        $pathFile = Storage::disk('google')->get($key);
-
-        return response($pathFile)->withHeaders(
-            [
-                'Content-Description' => 'File Transfer',
-                'Content-Type' => 'image/png',
-            ]
-        );
-
-        // return response()->make(
-        //     $result,
-        //     200,
-        //     // ['Content-Type' => 'application/pdf'],
-        //     ['Content-Type' => $result->mime_type],
-        // );
-    }
 
     public function deleteDrive($files)
     {
@@ -193,5 +201,25 @@ class GoogleDriveController extends Controller
             "status" => 200,
             "message" => 'Success',
         ];
+    }
+    public function searchFiles(Request $request)
+    {
+        $searchQuery = $request->input('query');
+
+        // Implement your search logic here using the Google Drive storage driver
+        // You may use the `listContents` method and filter the results based on the search query
+
+        $dir = '/';
+        $recursive = false;
+        $contents = collect(Storage::disk('google')->listContents($dir, $recursive));
+
+        $filteredContents = $contents->filter(function ($content) use ($searchQuery) {
+            return str_contains($content['name'], $searchQuery);
+        });
+
+        return response()->json([
+            'status' => 200,
+            'data' => $filteredContents,
+        ]);
     }
 }

@@ -19,7 +19,7 @@ class S3CloudController extends Controller
 
     }
 
-    public function getDriveSerive()
+    public function getDriveService()
     {
 
     }
@@ -36,8 +36,8 @@ class S3CloudController extends Controller
 
     public function getAllDrive(){
         $dir = '/';
-        $recursive = false; 
-        $contents = collect(Storage::disk('s3')->listContents($dir, $recursive));    
+        $recursive = false;
+        $contents = collect(Storage::disk('s3')->listContents($dir, $recursive));
         return [
             "status" => 200,
             "data" => $contents
@@ -50,26 +50,26 @@ class S3CloudController extends Controller
         return [
             "status" => 200,
             "data" => 'Success'
-        ]; 
+        ];
     }
 
     public function upLoadDrive(Request $request){
         if ($request->hasFile('file')) {
             $filenamewithextension = $request->file('file')->getClientOriginalName();
-            
+
             //get filename without extension
             $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
-            
+
             //get file extension
             $extension = $request->file('file')->getClientOriginalExtension();
-            
+
             //filename to store
             $filenametostore = $filename . '_' . time() . '.' . $extension;
 
             $file = $request->file('file');
 
             $size = $file->getSize();
-            
+
             $type = $file->extension();
 
             $path = '/' . $filenametostore;
@@ -99,7 +99,7 @@ class S3CloudController extends Controller
     public function getfileUpLoadCloud($key){
         $file = FileUploads::where('key', $key)->first();
         $urlFile = Storage::disk('s3')->url($key);
-        
+
         return [
             "status" => 200,
             "url" => $urlFile,

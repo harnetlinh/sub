@@ -73,10 +73,6 @@ Route::delete('/file-delete-cloud/{option}/{files}',[
     'deleteDrive'
 ]);
 
-Route::get('/get-file-upLoad-cloud/{option}/{key}',[
-    CloudController::class,
-    'getfileUpLoadCloud'
-]);
 
 Route::get('/file-down-load-cloud/{option}/{key}',[
     CloudController::class,
@@ -107,4 +103,8 @@ Route::get('/fileDownLoadCloud/{option}/{key}',[
 Route::delete('/fileDeleteCloud/{option}/{key}',[
     FileUploadController::class,
     'fileDeleteCloud'
+]);
+Route::get('/search-google-drive',[
+    GoogleDriveController::class,
+    'searchFiles'
 ]);

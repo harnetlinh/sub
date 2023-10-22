@@ -77,17 +77,7 @@ class CloudController extends Controller
         }
     }
 
-    public function getfileUpLoadCloud($option,$key){
-        if ($option ==='S3'){
-            return $this->S3Cloud->getfileUpLoadCloud($key);
-        }elseif ($option =='Google'){
-            return $this->GoogleCloud->getfileUpLoadCloud($key);
-        }elseif ($option =='Dropbox'){
-            return $this->DropboxCloud->getfileUpLoadCloud($key);
-        }else{
-            return response()->json("{$option}");
-        }
-    }
+   
 
     public function fileDownLoadCloud($option,$key){
         if ($option ==='S3'){

@@ -31,7 +31,7 @@ const router = VueRouter.createRouter({
             props: true
         },
         {
-            path: '/detailDrive/:id',
+            path: '/detailDrive/:cloud/:id',
             component: DetailDrive,
             name: 'detailDrive',
         },

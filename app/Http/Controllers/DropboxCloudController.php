@@ -44,7 +44,7 @@ class DropboxCloudController extends Controller
         }
     }
 
-    public function getDriveSerive()
+    public function getDriveService()
     {
 
     }
