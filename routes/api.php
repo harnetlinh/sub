@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GoogleDriveController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +17,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::group(['middleware' => ['api']], function () {
+
+    Route::group(['prefix' => 'googledrive'], function () {
+        Route::get('/searchFiles',[GoogleDriveController::class, 'searchFiles']);
+        // Route::post('/postInfoStudentBhyt',[GoogleDriveController::class, 'postInfoStudentBhyt']);
+        // Route::post('/postInfoMemberBhyt',[GoogleDriveController::class, 'postInfoMemberBhyt']);
+        // Route::post('/postCancelBhyt',[GoogleDriveController::class, 'postCancelBhyt']);
+    });
+
 });

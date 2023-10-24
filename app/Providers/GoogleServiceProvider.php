@@ -27,9 +27,6 @@ class GoogleServiceProvider extends ServiceProvider
     {
         try {
             Storage::extend('google', function($app, $config) {
-                // $accessToken = 'ya29.a0AbVbY6MPgkKR6HqHl-DpnRN_mzRyfEws3ugijPWkaJntyAQFEf1HTJ4GkWGDlsweCaIJVnLG2uev7V0CLs-XrnuZKAMizsNBJr3lCI8gvVeprlre_YwdaDkSYXd8C87IxVH9oGUknVxhmWIuFFtHFT_lRkIvaCgYKAdoSARISFQFWKvPlGN1ajhLhdpxcwK0bfBbaGQ0163';
-                // $refreshToken = '1//0e8IElAEGHy5XCgYIARAAGA4SNwF-L9Irw_YanODLhugJigi1jWTmMEbRAsNu78bnkfjhqIWQdHdaZYd4Z6HGL0uBvzrA4likL88';
-
                 $accessToken = session()->get('accessToken');
                 $refreshToken = session()->get('refreshToken');
 

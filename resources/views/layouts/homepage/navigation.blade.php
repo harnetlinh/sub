@@ -106,7 +106,7 @@
                       <div class="d-flex justify-content-center social-buttons">
                           <button type="button" class="btn btn-secondary btn-round" data-toggle="tooltip"
                               data-placement="top" title="google">
-                              <a href="{{ url('google/login') }}">
+                              <a href="{{ url('login/google') }}">
                                 <i class="fab fa-google"></i>
                             </a>
 

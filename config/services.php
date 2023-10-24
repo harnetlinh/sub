@@ -40,10 +40,10 @@ return [
         'redirect_uris' => 'http://127.0.0.1:8000/google/callback',
     ],
     'dropbox' => [
-        'client_id' => env('DROPBOX_APP_KEY'),
-        'client_secret' => env('DROPBOX_APP_SECRET'),
+        'app_key' => env('DROPBOX_APP_KEY'),
+        'app_secret' => env('DROPBOX_APP_SECRET'),
         'redirect' => env('DROPBOX_REDIRECT_URI'),
-        
+        'access_token' => env('DROPBOX_ACCESS_TOKEN'),
     ],
 
 ];

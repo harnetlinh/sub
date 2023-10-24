@@ -16,7 +16,6 @@ class GoogleDriveController extends Controller
 {
     public function loginWithGoogle()
     {
-
         return Socialite::driver('google')->scopes([
             'https://www.googleapis.com/auth/drive.readonly',
             'https://www.googleapis.com/auth/drive.metadata',
@@ -32,7 +31,6 @@ class GoogleDriveController extends Controller
     public function callbackFromGoogle()
     {
         try {
-
             $user = Socialite::driver('google')->user();
             $is_user = DriveService::where('email', $user->getEmail())->first();
             if (!$is_user) {
@@ -202,24 +200,29 @@ class GoogleDriveController extends Controller
             "message" => 'Success',
         ];
     }
-    public function searchFiles(Request $request)
+    public function searchFiles()
     {
-        $searchQuery = $request->input('query');
+        $currentFolderPath = request('folder', '/');
+        $searchQuery = request('query', '');
 
-        // Implement your search logic here using the Google Drive storage driver
-        // You may use the `listContents` method and filter the results based on the search query
-
-        $dir = '/';
+        $dir = $currentFolderPath;
         $recursive = false;
         $contents = collect(Storage::disk('google')->listContents($dir, $recursive));
 
-        $filteredContents = $contents->filter(function ($content) use ($searchQuery) {
-            return str_contains($content['name'], $searchQuery);
+        // Lọc kết quả dựa trên truy vấn tìm kiếm
+        $filteredContents = $contents->filter(function ($item) use ($searchQuery) {
+            return str_contains($item['basename'], $searchQuery);
         });
 
-        return response()->json([
-            'status' => 200,
-            'data' => $filteredContents,
+        // Chuyển đổi dữ liệu thành chuỗi JSON hợp lệ
+        $jsonData = json_encode([
+            "status" => 200,
+            "data" => $filteredContents->values(), // Chuyển đổi dữ liệu thành mảng và loại bỏ các khoảng trắng
+            "current_folder" => $currentFolderPath,
         ]);
+
+        // Trả về dữ liệu JSON hợp lệ với tiêu đề 'Content-Type' là 'application/json'
+        return response($jsonData, 200)->header('Content-Type', 'application/json');
     }
+
 }

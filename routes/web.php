@@ -2,11 +2,11 @@
 
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\GoogleController;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\GoogleDriveController;
 use App\Http\Controllers\CloudController;
 use App\Http\Controllers\DropboxCloudController;
+use App\Http\Controllers\GoogleController;
+
 
 
 /*
@@ -32,6 +32,9 @@ Route::get('/home', function () {
 })->name('home');
 
 
+Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
+
+Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 Route::prefix('google')->name('google.')->group( function(){
     Route::get('login', [GoogleDriveController::class, 'loginWithGoogle'])->name('login');
