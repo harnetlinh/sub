@@ -35,6 +35,8 @@ Route::get('/home', function () {
 Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 
 Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+Route::post('/logout/google', [GoogleController::class, 'logout'])->name('logout');
+
 
 Route::prefix('google')->name('google.')->group( function(){
     Route::get('login', [GoogleDriveController::class, 'loginWithGoogle'])->name('login');

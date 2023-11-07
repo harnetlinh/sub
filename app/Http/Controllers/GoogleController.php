@@ -57,16 +57,16 @@ class GoogleController extends Controller
         try {
             $user = Socialite::driver('google')->user();
             $is_user = User::where('email', $user->getEmail())->first();
-            if(!$is_user){
+            if (!$is_user) {
                 $saveUser = User::updateOrCreate([
                     'google_id' => $user->getId(),
-                ],[
+                ], [
                     'name' => $user->getName(),
                     'email' => $user->getEmail(),
-                    'password' => Hash::make($user->getName().'@'.$user->getId()),
+                    'password' => Hash::make($user->getName() . '@' . $user->getId()),
                 ]);
                 return redirect()->route('home');
-            }else{
+            } else {
                 $saveUser = User::where('email',  $user->getEmail())->update([
                     'google_id' => $user->getId(),
                 ]);
@@ -76,5 +76,14 @@ class GoogleController extends Controller
         } catch (\Throwable $e) {
             dd($e);
         }
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
 }

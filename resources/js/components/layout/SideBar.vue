@@ -102,6 +102,7 @@
                                 <li>
                                     <a
                                         href="#"
+                                        @click="confirmLogout"
                                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                                         role="menuitem"
                                         >Sign out</a
@@ -263,7 +264,23 @@ export default {
         async getProduct(){
             const {data} = await axios.get('http://127.0.0.1:8000/get-drive-serive');
             this.products = data.data;
-        }
+        },
+
+        confirmLogout() {
+            if (window.confirm('Are you sure you want to logout?')) {
+                this.logout();
+            }
+        },
+
+        logout() {
+            axios.post('/logout/google')
+                .then(response => {
+                    window.location.href = '/';
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
     },
 };
 </script>

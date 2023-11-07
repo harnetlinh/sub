@@ -52,7 +52,7 @@ class DropboxCloudController extends Controller
                 ]);
 
                 $userEmail =  $response->json(['email']);
-                $is_user = DriveService::where('email', $userEmail)->first();
+                $is_user = DriveService::where('email', $userEmail)->where('title', 'Dropbox')->first();
                 if (!$is_user) {
                     $saveCloud = DriveService::updateOrCreate([
                         'token' => $accessToken,
