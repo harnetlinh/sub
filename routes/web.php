@@ -84,31 +84,6 @@ Route::get('/file-down-load-cloud/{option}/{key}',[
     'fileDownLoadCloud'
 ]);
 
-//Old API
-Route::get('/getAllFileUploadCloud/{option}',[
-    FileUploadController::class,
-    'getAllFileUpload'
-]);
-
-Route::get('/getFileUpload/{option}/{key}',[
-    FileUploadController::class,
-    'getFileUpload'
-]);
-
-Route::post('/fileUploadToCloud/{option}',[
-    FileUploadController::class,
-    'fileUploadToCloud'
-]);
-
-Route::get('/fileDownLoadCloud/{option}/{key}',[
-    FileUploadController::class,
-    'fileDownLoadCloud'
-]);
-
-Route::delete('/fileDeleteCloud/{option}/{key}',[
-    FileUploadController::class,
-    'fileDeleteCloud'
-]);
 Route::get('/search-google-drive',[
     GoogleDriveController::class,
     'searchFiles'

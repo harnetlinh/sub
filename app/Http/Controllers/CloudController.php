@@ -17,17 +17,17 @@ class CloudController extends Controller
         $this->DropboxCloud = $DropboxCloud;
     }
 
-    public function addCloudService($option,$key){
-        if ($option ==='S3'){
-            return $this->S3Cloud->addCloudService($key);
-        }elseif ($option =='Google'){
-            return $this->GoogleCloud->addCloudService($key);
-        }elseif ($option =='Dropbox'){
-            return $this->DropboxCloud->addCloudService($key);
-        }else{
-            return response()->json("{$option}");
-        }
-    }
+    // public function addCloudService($option,$key){
+    //     if ($option ==='S3'){
+    //         return $this->S3Cloud->addCloudService($key);
+    //     }elseif ($option =='Google'){
+    //         return $this->GoogleCloud->addCloudService($key);
+    //     }elseif ($option =='Dropbox'){
+    //         return $this->DropboxCloud->addCloudService($key);
+    //     }else{
+    //         return response()->json("{$option}");
+    //     }
+    // }
 
     public function getSingleDrive($option,$key){
         if ($option ==='S3'){
@@ -77,7 +77,7 @@ class CloudController extends Controller
         }
     }
 
-   
+
 
     public function fileDownLoadCloud($option,$key){
         if ($option ==='S3'){

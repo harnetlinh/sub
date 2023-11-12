@@ -17,14 +17,16 @@ class GoogleDriveController extends Controller
     public function loginWithGoogle()
     {
         return Socialite::driver('google')->scopes([
-            'https://www.googleapis.com/auth/drive.readonly',
-            'https://www.googleapis.com/auth/drive.metadata',
-            'https://www.googleapis.com/auth/drive.appdata',
-            'https://www.googleapis.com/auth/drive.metadata.readonly',
-            'https://www.googleapis.com/auth/userinfo.profile',
-            'https://www.googleapis.com/auth/userinfo.email',
             'https://www.googleapis.com/auth/drive',
             'https://www.googleapis.com/auth/drive.file',
+            'https://www.googleapis.com/auth/drive.appdata',
+            'https://www.googleapis.com/auth/userinfo.email',
+            'https://www.googleapis.com/auth/drive.metadata.readonly',
+            'https://www.googleapis.com/auth/drive.photos.readonly	',
+            'https://www.googleapis.com/auth/drive.metadata',
+            'https://www.googleapis.com/auth/drive',
+            'https://www.googleapis.com/auth/drive.readonly',
+            'https://www.googleapis.com/drive/v3/files/fileId'
         ])->with(['access_type' => 'offline'])->redirect();
     }
 
@@ -33,6 +35,7 @@ class GoogleDriveController extends Controller
         try {
             $user = Socialite::driver('google')->user();
             $is_user = DriveService::where('email', $user->getEmail())->first();
+            
             if (!$is_user) {
                 $saveCloud = DriveService::updateOrCreate([
                     'token' => $user->token,
