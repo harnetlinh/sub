@@ -321,7 +321,7 @@ export default {
     async downloadFile(filePath) {
       try {
         const response = await axios.get(
-          `http://127.0.0.1:8000/file-down-load-cloud/${this.cloud}/${filePath}`,
+          `/file-down-load-cloud/${this.cloud}/${filePath}`,
           {
             responseType: "blob",
           }

@@ -10,11 +10,15 @@ class CloudController extends Controller
     public $GoogleCloud;
     public $DropboxCloud;
 
-    public function __construct(S3CloudController $S3Cloud,GoogleDriveController $GoogleCloud,DropboxCloudController $DropboxCloud)
+    public function __construct(S3CloudController $S3Cloud, GoogleDriveController $GoogleCloud, DropboxCloudController $DropboxCloud)
     {
         $this->S3Cloud = $S3Cloud;
         $this->GoogleCloud = $GoogleCloud;
         $this->DropboxCloud = $DropboxCloud;
+        // unlimited time
+        set_time_limit(0);
+        // memory
+        ini_set('memory_limit', -1);
     }
 
     // public function addCloudService($option,$key){
@@ -29,76 +33,83 @@ class CloudController extends Controller
     //     }
     // }
 
-    public function getSingleDrive($option,$key){
-        if ($option ==='S3'){
+    public function getSingleDrive($option, $key)
+    {
+        if ($option === 'S3') {
             return $this->S3Cloud->getSingleDrive($key);
-        }elseif ($option =='Google'){
+        } elseif ($option == 'Google') {
             return $this->GoogleCloud->getSingleDrive($key);
-        }elseif ($option =='Dropbox'){
+        } elseif ($option == 'Dropbox') {
             return $this->DropboxCloud->getSingleDrive($key);
-        }else{
+        } else {
             return response()->json("{$option}");
         }
     }
 
-    public function getAllDrive($option){
-        if ($option ==='S3'){
+    public function getAllDrive($option)
+    {
+        if ($option === 'S3') {
             return $this->S3Cloud->getAllDrive();
-        }elseif ($option =='Google'){
+        } elseif ($option == 'Google') {
             return $this->GoogleCloud->getAllDrive();
-        }elseif ($option =='Dropbox'){
+        } elseif ($option == 'Dropbox') {
             return $this->DropboxCloud->getAllDrive();
-        }else{
+        } else {
             return response()->json("{$option}");
         }
     }
 
-    public function newFolder($option){
-        if ($option ==='S3'){
+    public function newFolder($option)
+    {
+        if ($option === 'S3') {
             return $this->S3Cloud->newFolder();
-        }elseif ($option =='Google'){
+        } elseif ($option == 'Google') {
             return $this->GoogleCloud->newFolder();
-        }elseif ($option =='Dropbox'){
+        } elseif ($option == 'Dropbox') {
             return $this->DropboxCloud->newFolder();
-        }else{
+        } else {
             return response()->json("{$option}");
         }
     }
 
-    public function upLoadDrive($option, Request $request){
-        if ($option ==='S3'){
+    public function upLoadDrive($option, Request $request)
+    {
+        if ($option === 'S3') {
             return $this->S3Cloud->upLoadDrive($request);
-        }elseif ($option =='Google'){
+        } elseif ($option == 'Google') {
             return $this->GoogleCloud->upLoadDrive($request);
-        }elseif ($option =='Dropbox'){
+        } elseif ($option == 'Dropbox') {
             return $this->DropboxCloud->upLoadDrive($request);
-        }else{
+        } else {
             return response()->json("{$option}");
         }
     }
 
 
 
-    public function fileDownLoadCloud($option,$key){
-        if ($option ==='S3'){
+    public function fileDownLoadCloud($option, $key)
+    {
+
+        if ($option === 'S3') {
             return $this->S3Cloud->fileDownLoadCloud($key);
-        }elseif ($option =='Google'){
+        } elseif ($option == 'Google') {
             return $this->GoogleCloud->fileDownLoadCloud($key);
-        }elseif ($option =='Dropbox'){
+        } elseif ($option == 'Dropbox') {
             return $this->DropboxCloud->fileDownLoadCloud($key);
-        }else{
+        } else {
             return response()->json("{$option}");
         }
     }
 
-    public function deleteDrive($option,$files){
-        if ($option ==='S3'){
+    public function deleteDrive($option, $files)
+    {
+        if ($option === 'S3') {
             return $this->S3Cloud->deleteDrive($files);
-        }elseif ($option =='Google'){
+        } elseif ($option == 'Google') {
             return $this->GoogleCloud->deleteDrive($files);
-        }elseif ($option =='Dropbox'){
+        } elseif ($option == 'Dropbox') {
             return $this->DropboxCloud->deleteDrive($files);
-        }else{
+        } else {
             return response()->json("{$option}");
         }
     }
